@@ -1,10 +1,11 @@
 import pygame
 import heapq
 import random
-import time
+
 
 def heuristic(a, b):
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
 
 # A* algorithm
 def a_star(start, goal, obstacles):
@@ -43,8 +44,10 @@ player_pos = [0, 0]
 coin_pos = [random.randint(0, board_size-1), random.randint(0, board_size-1)]
 
 # obstacle position
-obstacles = [(random.randint(0, board_size-1), random.randint(0, board_size-1)) for _ in
-             range(int(board_size*board_size*0.3))]
+obstacles = [
+    (random.randint(0, board_size - 1), random.randint(0, board_size - 1))
+    for _ in range(int(board_size**2 * 0.3))
+]
 
 # path finding section
 came_from, cost_so_far = a_star(tuple(player_pos), tuple(coin_pos), obstacles)
@@ -62,3 +65,29 @@ while current != tuple(player_pos):
 path.append(tuple(player_pos))
 path.reverse()
 
+# main program loop
+running = True
+while running:
+    pygame.time.delay(50)
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    # path following movement
+    if path:
+        player_pos = list(path.pop(0))
+
+    if player_pos == coin_pos:
+        print("The coin was collected!")
+        running = False
+
+    # scene rendering
+    win.fill((0, 0, 0))  # obstacle colour
+    pygame.draw.rect(win, (0, 255, 0), (player_pos[0] * 10, player_pos[1] * 10, 10, 10))  # player
+    pygame.draw.rect(win, (255, 255, 0), (coin_pos[0] * 10, coin_pos[1] * 10, 10, 10))  # coin
+    for obstacle in obstacles:  # obstacle drawing
+        pygame.draw.rect(win, (255, 0, 0), (obstacle[0] * 10, obstacle[1] * 10, 10, 10))
+    pygame.display.update()
+
+pygame.quit()
