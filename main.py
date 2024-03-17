@@ -46,3 +46,19 @@ coin_pos = [random.randint(0, board_size-1), random.randint(0, board_size-1)]
 obstacles = [(random.randint(0, board_size-1), random.randint(0, board_size-1)) for _ in
              range(int(board_size*board_size*0.3))]
 
+# path finding section
+came_from, cost_so_far = a_star(tuple(player_pos), tuple(coin_pos), obstacles)
+while tuple(coin_pos) not in came_from:
+    coin_pos = [random.randint(0, board_size-1), random.randint(0, board_size-1)]
+    came_from, cost_so_far = a_star(tuple(player_pos), tuple(coin_pos), obstacles)
+
+current = tuple(coin_pos)
+path = []
+
+while current != tuple(player_pos):
+    path.append(current)
+    current = came_from[current]
+
+path.append(tuple(player_pos))
+path.reverse()
+
